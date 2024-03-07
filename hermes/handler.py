@@ -34,6 +34,37 @@ class Handler:
         else:
             print('Error al guardar los datos:', response.text)
         pass
+
+    def get_data(self,endpoint, params, as_dataframe):
+        response = requests.get(endpoint, params=params)
+        if response.status_code == 200:
+            data = response.json()
+            # return data
+            if as_dataframe:
+                try:
+                    return gpd.GeoDataFrame.from_features(data, crs='EPSG:4326')
+                except:
+                    return pd.DataFrame(response.json())
+            else:
+                return data
+        else:
+            print("Error al hacer la solicitud:", response.status_code)
+            return None
+
+    # Methods to load indicator data from API
+
+    def load_indicator_data(self, indicator_name, indicator_hash=None, as_dataframe=True):
+        endpoint = f'{self.server_address}/urban-indicators/indicatordata/get_table_data'
+        indicator_hash = self.indicator_hash if indicator_hash is None else indicator_hash
+
+        params = {
+            "indicator_name": indicator_name,
+            "indicator_hash": indicator_hash,
+        }
+        
+        return self.get_data(endpoint, params, as_dataframe)
+
+    # Methods to load data from API
     
     def load_amenities(self):
         amenities = None
