@@ -12,7 +12,7 @@ from shapely.geometry import Point, LineString, Polygon
 class Handler:
     def __init__(self):
         self.server_address = os.getenv('server_address', 'http://localhost:8000')
-        self.request_data_endpoint = os.getenv('request_data_endpoint', '/api')
+        self.request_data_endpoint = os.getenv('request_data_endpoint', 'api')
         self.id_network = os.getenv('id_roadnetwork', 1)
         self.base_url = f'{self.server_address}/{self.request_data_endpoint}'
         self.roadnetwork_url = f'{self.base_url}/roadnetwork'

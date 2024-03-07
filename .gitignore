@@ -1,2 +1,4 @@
 clbb_hermes.egg-info/*
 dist/*
+testing_pip/*
+.venv/*
