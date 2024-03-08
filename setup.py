@@ -1,9 +1,10 @@
 from setuptools import setup, find_packages
-from hermes.__init__ import __version__
+
+version = "0.1.3"
 
 setup(
     name='clbb-hermes',
-    version=__version__,
+    version=version,
     packages=find_packages(),
     install_requires=[
         'requests',

@@ -1,3 +1,5 @@
 from .functions import *
 from .handler import *
-__version__ = "0.1.3"
+from setup import version
+
+__version__ = version
