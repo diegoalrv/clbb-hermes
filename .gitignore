@@ -2,3 +2,4 @@ clbb_hermes.egg-info/*
 dist/*
 testing_pip/*
 .venv/*
+*__pycache__*
