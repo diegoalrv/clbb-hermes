@@ -14,8 +14,6 @@ class Handler:
         self.server_address = os.getenv('server_address', 'http://localhost:8000')
         self.request_data_endpoint = os.getenv('request_data_endpoint', 'api')
         self.id_network = os.getenv('id_roadnetwork', 1)
-        self.base_url = f'{self.server_address}/{self.request_data_endpoint}'
-        self.roadnetwork_url = f'{self.base_url}/roadnetwork'
         self.project_name = os.getenv('project_name', '')
     
     @staticmethod
@@ -61,14 +59,15 @@ class Handler:
             "indicator_name": indicator_name,
             "indicator_hash": indicator_hash,
         }
-        
-        return self.get_data(endpoint, params, as_dataframe)
+        data = self.get_data(endpoint, params, as_dataframe)
+        data.drop(columns=['hash'], inplace=True)
+        return data
 
     # Methods to load data from API
     
     def load_amenities(self):
         amenities = None
-        endpoint = f'{self.base_url}/amenity/'
+        endpoint = f'{self.server_address}/{self.request_data_endpoint}/amenity/'
         response = requests.get(endpoint)
         data = response.json()
         
@@ -84,7 +83,7 @@ class Handler:
 
     def load_area_of_interest(self, id=2):
         area_of_interest = None
-        endpoint = f'{self.base_url}/areaofinterest/{id}/'
+        endpoint = f'{self.server_address}/{self.request_data_endpoint}/areaofinterest/{id}/'
         response = requests.get(endpoint)
         data = response.json()
         geometries= [wkt.loads(data['geometry'].split(';')[-1])]
@@ -94,10 +93,13 @@ class Handler:
         area_of_interest = area_of_interest.set_crs(4326)
         return area_of_interest
 
-    def load_network(self, id_network):
-        endpoint = f'{self.roadnetwork_url}/{id_network}/serve_h5_file/'
+    def load_network(self, id_network=None):
+        if id_network is None:
+            id_network = self.id_network
         filename = f'/app/tmp/net_{id_network}.h5'
         if not os.path.exists(filename):
+            endpoint = f'{self.server_address}/{self.request_data_endpoint}/roadnetwork/{id_network}/serve_h5_file/'
+            print(endpoint)
             response = requests.get(endpoint)
             if response.status_code == 200:
                 with open(filename, 'wb') as f:
@@ -105,4 +107,5 @@ class Handler:
                 print("¡Archivo h5 descargado exitosamente!")
             else:
                 print("Error al descargar el archivo h5:", response.text)
+                return response.status_code
         return pdna.Network.from_hdf5(filename)
