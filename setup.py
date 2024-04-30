@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = "0.1.5.6"
+version = "0.1.5.7"
 
 setup(
     name='clbb-hermes',

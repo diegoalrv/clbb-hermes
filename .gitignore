@@ -3,3 +3,4 @@ dist/*
 testing_pip/*
 .venv/*
 *__pycache__*
+build/*
